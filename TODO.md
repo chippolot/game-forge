@@ -1,25 +1,29 @@
 # TODO
-- [ ] Checkers
+- [ ] Grid Lock
+    - [ ] Interface
+        - [ ] Game selection
     - [ ] Actions
         - [ ] Add ability to place or move piece
         - [ ] Add game config which can enable / disable action types
             - [ ] Consider IAction with IRules processing and validating actions?
         - [ ] Add better player prompt which displays possible action types
-    - [ ] Pieces
-        - [ ] Add colored pieces
     - [ ] Board
         - [ ] Add chess style board coords
         - [ ] Add board coord display
-- [ ] Chess
+- [ ] Checkers
     - [ ] Pieces
-        - [ ] Don't directly associate players and pieces (think chess)
-- [ ] Score
-    - [ ] Add score display
+        - [ ] Actions can result in piece removal
+        - [ ] Add colored pieces
 - [ ] Lua
     - [ ] Have game framework call into lua
 - [ ] AI
     - [ ] Implement simple LLM to generate lua code
     - [ ] Implement game registry to save fun games
+- [ ] Chess
+    - [ ] Pieces
+        - [ ] Don't directly associate players and pieces (think chess)
+- [ ] Score
+    - [ ] Add score display
 
 # Done
 - [x] Pieces

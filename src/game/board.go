@@ -9,6 +9,7 @@ type IBoard interface {
 	GetHeight() int
 	GetPiece(x, y int) Piece
 	PlacePiece(x, y int, piece Piece)
+	IsFull() bool
 	Clear()
 	Print()
 }
@@ -46,6 +47,17 @@ func (b *Board) GetPiece(x, y int) Piece {
 
 func (b *Board) PlacePiece(x, y int, piece Piece) {
 	b.board[y][x] = piece
+}
+
+func (b *Board) IsFull() bool {
+	for col := 0; col < b.GetWidth(); col++ {
+		for row := 0; row < b.GetHeight(); row++ {
+			if b.GetPiece(col, row) == nil {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (b *Board) Clear() {

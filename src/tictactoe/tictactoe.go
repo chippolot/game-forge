@@ -20,7 +20,7 @@ func (r *Rules) IsGameOver(board game.IBoard) (game.GameOverState, game.Player) 
 	if hasWinner {
 		return game.GameWon, winningPlayer
 	}
-	if isBoardFilled(board) {
+	if board.IsFull() {
 		return game.GameTie, 0
 	}
 	return game.NotGameOver, 0
@@ -51,17 +51,6 @@ func getWinner(board game.IBoard) (bool, game.Player) {
 		return true, winner
 	}
 	return false, 0
-}
-
-func isBoardFilled(board game.IBoard) bool {
-	for col := 0; col < board.GetWidth(); col++ {
-		for row := 0; row < board.GetHeight(); row++ {
-			if board.GetPiece(col, row) == nil {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 func checkRun(board game.IBoard, x, y, dx, dy int) (bool, game.Player) {
