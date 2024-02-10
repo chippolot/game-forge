@@ -5,7 +5,16 @@ type IGame interface {
 	GetDescription() string
 
 	Start()
-	MakeMove(x, y int)
-	GetCurrentPiece() Piece
+	MakeMove(x, y int, piece Piece)
+	GetCurrentPlayer() Player
+	GetPlayerPiece(player Player) Piece
 	Restart()
 }
+
+type GameOverState int
+
+const (
+	NotGameOver GameOverState = iota
+	GameWon
+	GameTie
+)

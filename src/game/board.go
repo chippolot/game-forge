@@ -51,7 +51,7 @@ func (b *Board) PlacePiece(x, y int, piece Piece) {
 func (b *Board) Clear() {
 	for y := 0; y < b.Height; y++ {
 		for x := 0; x < b.Width; x++ {
-			b.board[y][x] = Empty
+			b.board[y][x] = nil
 		}
 	}
 }
@@ -59,13 +59,11 @@ func (b *Board) Clear() {
 func (b *Board) Print() {
 	for y := 0; y < b.Height; y++ {
 		for x := 0; x < b.Width; x++ {
-			switch b.board[y][x] {
-			case Empty:
+			piece := b.board[y][x]
+			if piece == nil {
 				fmt.Print("- ")
-			case X:
-				fmt.Print("x ")
-			case O:
-				fmt.Print("o ")
+			} else {
+				fmt.Print(piece.GetDisplayString() + " ")
 			}
 		}
 		fmt.Println()

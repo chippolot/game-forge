@@ -7,38 +7,91 @@ import (
 // Rules concrete implementation of the tic-tac-toe game rules
 type Rules struct{}
 
-func (r *Rules) IsValidMove(board game.IBoard, x, y int, piece game.Piece) bool {
+func (r *Rules) IsValidMove(board game.IBoard, x, y int, player game.Player, piece game.Piece) bool {
 	validSpace := x >= 0 && y >= 0 && x < board.GetWidth() && y < board.GetHeight()
 	if !validSpace {
 		return false
 	}
-	return board.GetPiece(x, y) == game.Empty
+	return board.GetPiece(x, y) == nil
 }
 
-func (r *Rules) IsGameOver(board game.IBoard, piece game.Piece) bool {
-	// Implement logic to check for a win or a draw
-	// For tic-tac-toe, you would check for rows, columns, and diagonals
-	return false
+func (r *Rules) IsGameOver(board game.IBoard) (game.GameOverState, game.Player) {
+	hasWinner, winningPlayer := getWinner(board)
+	if hasWinner {
+		return game.GameWon, winningPlayer
+	}
+	if isBoardFilled(board) {
+		return game.GameTie, 0
+	}
+	return game.NotGameOver, 0
 }
 
-func (r *Rules) GetWinner(board game.IBoard) game.Piece {
-	// Implement logic to determine the winner
-	// For tic-tac-toe, you would check for rows, columns, and diagonals
-	return game.Empty
+func getWinner(board game.IBoard) (bool, game.Player) {
+	// Check columns
+	for x := 0; x < 3; x++ {
+		hasWinner, winner := checkRun(board, x, 0, 0, 1)
+		if hasWinner {
+			return true, winner
+		}
+	}
+	// Check rows
+	for y := 0; y < 3; y++ {
+		hasWinner, winner := checkRun(board, 0, y, 1, 0)
+		if hasWinner {
+			return true, winner
+		}
+	}
+	// Check diagonals
+	hasWinner, winner := checkRun(board, 0, 0, 1, 1)
+	if hasWinner {
+		return true, winner
+	}
+	hasWinner, winner = checkRun(board, 2, 0, -1, 1)
+	if hasWinner {
+		return true, winner
+	}
+	return false, 0
+}
+
+func isBoardFilled(board game.IBoard) bool {
+	for col := 0; col < board.GetWidth(); col++ {
+		for row := 0; row < board.GetHeight(); row++ {
+			if board.GetPiece(col, row) == nil {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func checkRun(board game.IBoard, x, y, dx, dy int) (bool, game.Player) {
+	piece := board.GetPiece(x, y)
+	if piece == nil {
+		return false, 0
+	}
+	for i := 0; i < 2; i++ {
+		x += dx
+		y += dy
+		nextPiece := board.GetPiece(x, y)
+		if nextPiece == nil || nextPiece.GetPlayer() != piece.GetPlayer() {
+			return false, 0
+		}
+	}
+	return true, piece.GetPlayer()
 }
 
 // Game concrete implementation of the tic-tac-toe game
 type Game struct {
-	gameBoard    game.IBoard
-	rules        game.IRules
-	currentPiece game.Piece
+	gameBoard     game.IBoard
+	rules         game.IRules
+	currentPlayer game.Player
 }
 
 func NewGame(board game.IBoard, rules game.IRules) game.IGame {
 	return &Game{
-		gameBoard:    board,
-		rules:        rules,
-		currentPiece: game.X, // Start with player X
+		gameBoard:     board,
+		rules:         rules,
+		currentPlayer: 0,
 	}
 }
 
@@ -51,32 +104,63 @@ func (g *Game) GetDescription() string {
 }
 
 func (g *Game) Start() {
-	// Initialize the game
+	g.currentPlayer = 0
 }
 
-func (g *Game) GetCurrentPiece() game.Piece {
-	return g.currentPiece
+func (g *Game) GetCurrentPlayer() game.Player {
+	return g.currentPlayer
 }
 
-func (g *Game) MakeMove(x, y int) {
-	if !g.rules.IsValidMove(g.gameBoard, x, y, g.currentPiece) {
+func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
+	if player == 0 {
+		return XPiece{
+			player: player,
+		}
+	} else if player == 1 {
+		return OPiece{
+			player: player,
+		}
+	}
+	return nil
+}
+
+func (g *Game) MakeMove(x, y int, piece game.Piece) {
+	if !g.rules.IsValidMove(g.gameBoard, x, y, g.currentPlayer, piece) {
 		panic("Invalid move.")
 	}
-	g.gameBoard.PlacePiece(x, y, g.currentPiece)
+	g.gameBoard.PlacePiece(x, y, piece)
 
-	if g.rules.IsGameOver(g.gameBoard, g.currentPiece) {
-		// Game over logic
-	} else {
-		// Switch player
-		if g.currentPiece == game.X {
-			g.currentPiece = game.O
-		} else {
-			g.currentPiece = game.X
-		}
+	gameOverState, _ := g.rules.IsGameOver(g.gameBoard)
+	if gameOverState == game.NotGameOver {
+		g.currentPlayer = (g.currentPlayer + 1) % 2
 	}
 }
 
 func (g *Game) Restart() {
 	g.gameBoard.Clear()
-	g.currentPiece = game.X // Reset to player X
+	g.Start()
+}
+
+type XPiece struct {
+	player game.Player
+}
+
+func (p XPiece) GetPlayer() game.Player {
+	return p.player
+}
+
+func (p XPiece) GetDisplayString() string {
+	return "x"
+}
+
+type OPiece struct {
+	player game.Player
+}
+
+func (p OPiece) GetPlayer() game.Player {
+	return p.player
+}
+
+func (p OPiece) GetDisplayString() string {
+	return "o"
 }
