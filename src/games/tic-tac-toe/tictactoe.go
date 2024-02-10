@@ -124,16 +124,9 @@ func (g *Game) GetCurrentPlayer() game.Player {
 }
 
 func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
-	if player == 0 {
-		return XPiece{
-			player: player,
-		}
-	} else if player == 1 {
-		return OPiece{
-			player: player,
-		}
+	return Piece{
+		player: player,
 	}
-	return nil
 }
 
 func (g *Game) ExecuteAction(action game.IAction) {
@@ -160,28 +153,21 @@ func (g *Game) Restart() {
 	g.Start()
 }
 
-type XPiece struct {
+type Piece struct {
 	player game.Player
 }
 
-func (p XPiece) GetPlayer() game.Player {
+func (p Piece) GetPlayer() game.Player {
 	return p.player
 }
 
-func (p XPiece) GetDisplayString() string {
-	return "x"
-}
-
-type OPiece struct {
-	player game.Player
-}
-
-func (p OPiece) GetPlayer() game.Player {
-	return p.player
-}
-
-func (p OPiece) GetDisplayString() string {
-	return "o"
+func (p Piece) GetDisplayString() string {
+	if p.player == 0 {
+		return "x"
+	} else if p.player == 1 {
+		return "o"
+	}
+	panic("unknown piece")
 }
 
 func parsePlacePieceAction(args []string, gameInstance game.IGame) (game.IAction, error) {
