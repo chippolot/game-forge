@@ -47,18 +47,22 @@ func main() {
 	for {
 		utils.ClearScreen()
 
+		// Print game metadata
 		fmt.Println(gameInstance.GetName())
 		fmt.Println("---------------------------------------")
 		fmt.Println(utils.WrapLines(gameInstance.GetDescription(), 80))
 		fmt.Println("---------------------------------------")
 		fmt.Println()
 
+		// Print board
 		board := gameInstance.GetBoard()
 		board.Print()
 
+		// Print action prompt
 		fmt.Printf("Player %v's turn\n", (gameInstance.GetCurrentPlayer() + 1))
 		fmt.Println("Enter action:")
 
+		// Parse player action
 		input, _ := reader.ReadString('\n')
 		action, err := actionParser.ParseAction(input, gameInstance)
 		if err != nil {
@@ -67,22 +71,20 @@ func main() {
 			continue
 		}
 
-		player := gameInstance.GetCurrentPlayer()
-		validAction, err := gameInstance.GetRules().IsValidAction(action, player, board)
-		if !validAction {
+		// Execute player action
+		gameState, err := gameInstance.ExecuteAction(action)
+		if err != nil {
 			fmt.Println("Error: ", err)
 			fmt.Scanln()
 			continue
 		}
 
-		gameInstance.ExecuteAction(action)
-
-		gameOverState, winningPlayer := gameInstance.GetRules().IsGameOver(board)
-		if gameOverState == game.GameWon {
-			fmt.Printf("Player %v Wins!\n", winningPlayer)
+		// Check for game over
+		if gameState.State == game.GameWon {
+			fmt.Printf("Player %v Wins!\n", gameState.WinningPlayer)
 			break
 		}
-		if gameOverState == game.GameTie {
+		if gameState.State == game.GameTie {
 			fmt.Println("Tied game.")
 			break
 		}

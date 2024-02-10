@@ -5,15 +5,19 @@ type IGame interface {
 	GetDescription() string
 
 	GetBoard() IBoard
-	GetRules() IRules
 
 	GetCurrentPlayer() Player
 	GetPlayerPiece(player Player) Piece
 
 	Start()
 	RegisterActions(actionParser *ActionParser)
-	ExecuteAction(action IAction)
+	ExecuteAction(action IAction) (GameState, error)
 	Restart()
+}
+
+type GameState struct {
+	State         GameOverState
+	WinningPlayer Player
 }
 
 type GameOverState int

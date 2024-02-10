@@ -103,10 +103,6 @@ func (g *Game) GetDescription() string {
 	return "Tic-tac-toe is a classic two-player game played on a 3x3 grid. Players take turns marking spaces with their respective symbols, typically \"X\" and \"O\", with the objective of placing three of their symbols in a row, column, or diagonal. The first player to achieve this goal wins the game. If all spaces are filled without a winner, the game ends in a draw. Tic-tac-toe is easy to learn, yet offers strategic depth, making it a timeless and engaging pastime for players of all ages."
 }
 
-func (g *Game) GetRules() game.IRules {
-	return g.rules
-}
-
 func (g *Game) GetBoard() game.IBoard {
 	return g.gameBoard
 }
@@ -129,10 +125,11 @@ func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
 	}
 }
 
-func (g *Game) ExecuteAction(action game.IAction) {
-	validAction, _ := g.rules.IsValidAction(action, g.currentPlayer, g.gameBoard)
+func (g *Game) ExecuteAction(action game.IAction) (game.GameState, error) {
+	player := g.GetCurrentPlayer()
+	validAction, err := g.rules.IsValidAction(action, player, g.gameBoard)
 	if !validAction {
-		panic("Invalid action.")
+		return game.GameState{}, err
 	}
 
 	switch typedAction := action.(type) {
@@ -142,10 +139,16 @@ func (g *Game) ExecuteAction(action game.IAction) {
 		panic("Invalid action.")
 	}
 
-	gameOverState, _ := g.rules.IsGameOver(g.gameBoard)
+	gameOverState, winningPlayer := g.rules.IsGameOver(g.gameBoard)
 	if gameOverState == game.NotGameOver {
 		g.currentPlayer = (g.currentPlayer + 1) % 2
 	}
+
+	gameState := game.GameState{
+		State:         gameOverState,
+		WinningPlayer: winningPlayer,
+	}
+	return gameState, nil
 }
 
 func (g *Game) Restart() {
