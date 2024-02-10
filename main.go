@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chippolot/game-forge/src/game"
-	"github.com/chippolot/game-forge/src/tictactoe"
+	"github.com/chippolot/game-forge/src/games/tictactoe"
 	"github.com/chippolot/game-forge/src/utils"
 )
 
