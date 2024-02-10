@@ -1,6 +1,6 @@
 package game
 
 type IRules interface {
-	IsValidMove(board IBoard, x, y int, player Player, piece Piece) bool
+	IsValidAction(action IAction, player Player, board IBoard) bool
 	IsGameOver(board IBoard) (GameOverState, Player)
 }

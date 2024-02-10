@@ -1,8 +1,7 @@
 # TODO
 - [ ] Grid Lock
-    - [ ] Interface
-        - [ ] Game selection
     - [ ] Actions
+        - [ ] Share more action parsing code
         - [ ] Add ability to place or move piece
         - [ ] Add game config which can enable / disable action types
             - [ ] Consider IAction with IRules processing and validating actions?
@@ -10,6 +9,7 @@
     - [ ] Board
         - [ ] Add chess style board coords
         - [ ] Add board coord display
+    - [ ] Implement rules
 - [ ] Checkers
     - [ ] Pieces
         - [ ] Actions can result in piece removal
@@ -29,9 +29,15 @@
 - [x] Pieces
     - [x] Create interface
     - [x] Handle display
+- [x] Interface
+    - [x] Game selection
+- [x] Game
+    - [x] Update game framework to check for winner and display message
 - [x] Tic-Tac-Toe
     - [x] Finish implementing IsGameOver for t-t-t
     - [x] Finish implementing GetWinner for t-t-t
-    - [x] Update game framework to check for winner and display message
 - [x] Project
     - [x] Create github
+- [x] Actions
+    - [x] Add action parser
+    - [x] Better way to inject implicit data into actions (ex: place piece)

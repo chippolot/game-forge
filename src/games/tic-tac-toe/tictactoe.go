@@ -1,18 +1,28 @@
 package tictactoe
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/chippolot/game-forge/src/game"
 )
 
 // Rules concrete implementation of the tic-tac-toe game rules
 type Rules struct{}
 
-func (r *Rules) IsValidMove(board game.IBoard, x, y int, player game.Player, piece game.Piece) bool {
-	validSpace := x >= 0 && y >= 0 && x < board.GetWidth() && y < board.GetHeight()
-	if !validSpace {
+func (r *Rules) IsValidAction(action game.IAction, player game.Player, board game.IBoard) bool {
+	switch typedAction := action.(type) {
+	case *game.PlacePieceAction:
+		x, y := typedAction.X, typedAction.Y
+		validSpace := x >= 0 && y >= 0 && x < board.GetWidth() && y < board.GetHeight()
+		if !validSpace {
+			return false
+		}
+		return board.GetPiece(x, y) == nil
+	default:
+		fmt.Printf("Unsupported action: %T\n", typedAction)
 		return false
 	}
-	return board.GetPiece(x, y) == nil
 }
 
 func (r *Rules) IsGameOver(board game.IBoard) (game.GameOverState, game.Player) {
@@ -76,10 +86,10 @@ type Game struct {
 	currentPlayer game.Player
 }
 
-func NewGame(board game.IBoard, rules game.IRules) game.IGame {
+func NewGame() game.IGame {
 	return &Game{
-		gameBoard:     board,
-		rules:         rules,
+		gameBoard:     game.NewBoard(3, 3),
+		rules:         &Rules{},
 		currentPlayer: 0,
 	}
 }
@@ -92,8 +102,20 @@ func (g *Game) GetDescription() string {
 	return "Tic-tac-toe is a classic two-player game played on a 3x3 grid. Players take turns marking spaces with their respective symbols, typically \"X\" and \"O\", with the objective of placing three of their symbols in a row, column, or diagonal. The first player to achieve this goal wins the game. If all spaces are filled without a winner, the game ends in a draw. Tic-tac-toe is easy to learn, yet offers strategic depth, making it a timeless and engaging pastime for players of all ages."
 }
 
+func (g *Game) GetRules() game.IRules {
+	return g.rules
+}
+
+func (g *Game) GetBoard() game.IBoard {
+	return g.gameBoard
+}
+
 func (g *Game) Start() {
 	g.currentPlayer = 0
+}
+
+func (g *Game) RegisterActions(actionParser *game.ActionParser) {
+	actionParser.RegisterAction(game.PlacePieceActionKeyword, parsePlacePieceAction)
 }
 
 func (g *Game) GetCurrentPlayer() game.Player {
@@ -113,11 +135,17 @@ func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
 	return nil
 }
 
-func (g *Game) MakeMove(x, y int, piece game.Piece) {
-	if !g.rules.IsValidMove(g.gameBoard, x, y, g.currentPlayer, piece) {
-		panic("Invalid move.")
+func (g *Game) ExecuteAction(action game.IAction) {
+	if !g.rules.IsValidAction(action, g.currentPlayer, g.gameBoard) {
+		panic("Invalid action.")
 	}
-	g.gameBoard.PlacePiece(x, y, piece)
+
+	switch typedAction := action.(type) {
+	case *game.PlacePieceAction:
+		g.gameBoard.PlacePiece(typedAction.X, typedAction.Y, typedAction.Piece)
+	default:
+		panic("Invalid action.")
+	}
 
 	gameOverState, _ := g.rules.IsGameOver(g.gameBoard)
 	if gameOverState == game.NotGameOver {
@@ -152,4 +180,26 @@ func (p OPiece) GetPlayer() game.Player {
 
 func (p OPiece) GetDisplayString() string {
 	return "o"
+}
+
+func parsePlacePieceAction(args []string, gameInstance game.IGame) (game.IAction, error) {
+	if len(args) != 2 {
+		return nil, fmt.Errorf("invalid number of arguments for place action")
+	}
+
+	x, err := strconv.Atoi(args[0])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse X coordinate: %w", err)
+	}
+
+	y, err := strconv.Atoi(args[1])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse Y coordinate: %w", err)
+	}
+
+	return &game.PlacePieceAction{
+		X:     x - 1,
+		Y:     y - 1,
+		Piece: gameInstance.GetPlayerPiece(gameInstance.GetCurrentPlayer()),
+	}, nil
 }
