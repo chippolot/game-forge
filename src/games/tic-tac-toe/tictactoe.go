@@ -10,18 +10,19 @@ import (
 // Rules concrete implementation of the tic-tac-toe game rules
 type Rules struct{}
 
-func (r *Rules) IsValidAction(action game.IAction, player game.Player, board game.IBoard) bool {
+func (r *Rules) IsValidAction(action game.IAction, player game.Player, board game.IBoard) (bool, error) {
 	switch typedAction := action.(type) {
 	case *game.PlacePieceAction:
 		x, y := typedAction.X, typedAction.Y
-		validSpace := x >= 0 && y >= 0 && x < board.GetWidth() && y < board.GetHeight()
-		if !validSpace {
-			return false
+		if !board.IsInBounds(x, y) {
+			return false, fmt.Errorf("out of bounds")
 		}
-		return board.GetPiece(x, y) == nil
+		if board.GetPiece(x, y) != nil {
+			return false, fmt.Errorf("space occupied")
+		}
+		return true, nil
 	default:
-		fmt.Printf("Unsupported action: %T\n", typedAction)
-		return false
+		return false, fmt.Errorf("unsupported action %T", typedAction)
 	}
 }
 
@@ -136,7 +137,8 @@ func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
 }
 
 func (g *Game) ExecuteAction(action game.IAction) {
-	if !g.rules.IsValidAction(action, g.currentPlayer, g.gameBoard) {
+	validAction, _ := g.rules.IsValidAction(action, g.currentPlayer, g.gameBoard)
+	if !validAction {
 		panic("Invalid action.")
 	}
 

@@ -7,6 +7,7 @@ import (
 type IBoard interface {
 	GetWidth() int
 	GetHeight() int
+	IsInBounds(x, y int) bool
 	GetPiece(x, y int) Piece
 	PlacePiece(x, y int, piece Piece)
 	IsFull() bool
@@ -39,6 +40,10 @@ func (b *Board) GetWidth() int {
 
 func (b *Board) GetHeight() int {
 	return b.Height
+}
+
+func (b *Board) IsInBounds(x, y int) bool {
+	return x >= 0 && y >= 0 && x < b.GetWidth() && y < b.GetHeight()
 }
 
 func (b *Board) GetPiece(x, y int) Piece {

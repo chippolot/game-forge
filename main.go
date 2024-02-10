@@ -68,8 +68,9 @@ func main() {
 		}
 
 		player := gameInstance.GetCurrentPlayer()
-		if !gameInstance.GetRules().IsValidAction(action, player, board) {
-			fmt.Println("Invalid move. Try again.")
+		validAction, err := gameInstance.GetRules().IsValidAction(action, player, board)
+		if !validAction {
+			fmt.Println("Error: ", err)
 			fmt.Scanln()
 			continue
 		}

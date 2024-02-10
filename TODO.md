@@ -1,11 +1,12 @@
 # TODO
 - [ ] Grid Lock
     - [ ] Actions
+        - [ ] Add better player prompt which displays possible action types
+            - [ ] Get help for actions
         - [ ] Share more action parsing code
         - [ ] Add ability to place or move piece
         - [ ] Add game config which can enable / disable action types
             - [ ] Consider IAction with IRules processing and validating actions?
-        - [ ] Add better player prompt which displays possible action types
     - [ ] Board
         - [ ] Add chess style board coords
         - [ ] Add board coord display
