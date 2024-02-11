@@ -1,6 +1,7 @@
 # TODO
 - [ ] Othello
-    - [ ] Implement rules
+    - [ ] Pieces
+        - [ ] Add colored pieces
 - [ ] Board
     - [ ] Flip row notation
 - [ ] Checkers
@@ -8,7 +9,6 @@
         - [ ] Add ability to place or move piece
     - [ ] Pieces
         - [ ] Actions can result in piece removal
-        - [ ] Add colored pieces
 - [ ] Lua
     - [ ] Have game framework call into lua
 - [ ] AI
@@ -34,6 +34,8 @@
 - [x] Tic-Tac-Toe
     - [x] Finish implementing IsGameOver for t-t-t
     - [x] Finish implementing GetWinner for t-t-t
+- [x] Othello
+    - [x] Implement rules
 - [x] Project
     - [x] Create github
 - [x] Actions

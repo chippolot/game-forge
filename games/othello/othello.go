@@ -39,7 +39,7 @@ func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.
 
 	updateScores(state)
 
-	gameOverState, winningPlayer := isGameOver(state.GetBoard())
+	gameOverState, winningPlayer := isGameOver(state)
 	if gameOverState == game.NotGameOver {
 		currentPlayer := state.GetCurrentPlayer()
 		currentPlayer = (currentPlayer + 1) % 2
@@ -65,9 +65,18 @@ func isValidAction(action game.IAction, state game.IGameState) (bool, error) {
 	}
 }
 
-func isGameOver(board game.IBoard) (game.GameResultState, game.Player) {
+func isGameOver(state game.IGameState) (game.GameResultState, game.Player) {
+	board := state.GetBoard()
 	if isBoardFullOrNoMoves(board) {
-		return game.GameWon, getWinningPlayer(board)
+		p1s := state.GetPlayerScore(0)
+		p2s := state.GetPlayerScore(1)
+		if p1s > p2s {
+			return game.GameWon, 0
+		} else if p2s > p1s {
+			return game.GameWon, 1
+		} else {
+			return game.GameTie, 0
+		}
 	}
 	return game.NotGameOver, 0
 }
@@ -85,21 +94,6 @@ func isBoardFullOrNoMoves(board game.IBoard) bool {
 		}
 	}
 	return full
-}
-
-func getWinningPlayer(board game.IBoard) game.Player {
-	counts := map[game.Player]int{0: 0, 1: 0}
-	for x := 0; x < board.GetWidth(); x++ {
-		for y := 0; y < board.GetHeight(); y++ {
-			if piece := board.GetPiece(x, y); piece != nil {
-				counts[piece.GetPlayer()]++
-			}
-		}
-	}
-	if counts[0] > counts[1] {
-		return 0
-	}
-	return 1
 }
 
 func canPlacePiece(x, y int, piece game.Piece, board game.IBoard) bool {
