@@ -5,13 +5,13 @@ import (
 	"strconv"
 )
 
-const (
-	PlacePieceActionKeyword = "place"
-)
+type ActionDesc struct {
+	Keyword     string
+	Usage       string
+	Description string
+}
 
 type IAction interface {
-	GetKeyword() ActionKeyword
-	Describe() string
 }
 
 type PlacePieceAction struct {
@@ -19,12 +19,8 @@ type PlacePieceAction struct {
 	Piece Piece
 }
 
-func (a PlacePieceAction) GetKeyword() ActionKeyword {
-	return PlacePieceActionKeyword
-}
-
-func (a PlacePieceAction) Describe() string {
-	return fmt.Sprintf("%v x y", a.GetKeyword())
+func PlacePieceActionDesc() ActionDesc {
+	return ActionDesc{"place", "place <x> <y>", "places a piece at <x>,<y>"}
 }
 
 func ParsePlacePieceAction(args []string, getPieceFunc func() Piece) (IAction, error) {

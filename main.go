@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chippolot/game-forge/src/game"
-	tictactoe "github.com/chippolot/game-forge/src/games/tic-tac-toe"
-	"github.com/chippolot/game-forge/src/utils"
+	"github.com/chippolot/game-forge/game"
+	tictactoe "github.com/chippolot/game-forge/games/tic-tac-toe"
+	"github.com/chippolot/game-forge/utils"
 )
 
 func main() {
@@ -48,15 +48,12 @@ func main() {
 		// Print game instance
 		gameInstance.Print()
 
-		// Print action prompt
-		fmt.Printf("Player %v's turn\n", (gameInstance.GetState().GetCurrentPlayer() + 1))
-		fmt.Print("Enter action: ")
-
 		// Parse player action
 		input, _ := reader.ReadString('\n')
 		action, err := actionParser.ParseAction(input, gameInstance)
 		if err != nil {
 			fmt.Println("Error:", err)
+			actionParser.PrintAvailableActions()
 			fmt.Scanln()
 			continue
 		}

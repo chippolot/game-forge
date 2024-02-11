@@ -3,17 +3,22 @@ package tictactoe
 import (
 	"fmt"
 
-	"github.com/chippolot/game-forge/src/game"
+	"github.com/chippolot/game-forge/game"
 )
 
 type Logic struct{}
 
 func (l *Logic) RegisterActions(actionParser *game.ActionParser) {
-	actionParser.RegisterAction(game.PlacePieceActionKeyword, func(args []string, gameInstance game.IGame) (game.IAction, error) {
-		return game.ParsePlacePieceAction(args, func() game.Piece {
-			return getPlayerPiece(gameInstance.GetState().GetCurrentPlayer())
-		})
-	})
+
+	placePieceActionRegistration := game.ActionRegistration{
+		Desc: game.PlacePieceActionDesc(),
+		ParseFunc: func(args []string, gameInstance game.IGame) (game.IAction, error) {
+			return game.ParsePlacePieceAction(args, func() game.Piece {
+				return getPlayerPiece(gameInstance.GetState().GetCurrentPlayer())
+			})
+		},
+	}
+	actionParser.RegisterAction(placePieceActionRegistration)
 }
 
 func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.GameResult, error) {

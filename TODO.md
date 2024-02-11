@@ -3,7 +3,6 @@
     - [ ] Actions
         - [ ] Add better player prompt which displays possible action types
             - [ ] Get help for actions
-        - [ ] Add game config which can enable / disable action types
     - [ ] Board
         - [ ] Add chess style board coords
         - [ ] Add board coord display

@@ -3,7 +3,7 @@ package game
 import (
 	"fmt"
 
-	"github.com/chippolot/game-forge/src/utils"
+	"github.com/chippolot/game-forge/utils"
 )
 
 type IGameRenderer interface {
@@ -35,4 +35,8 @@ func (r *SimpleGameRenderer) Print(gameInstance IGame) {
 		fmt.Println()
 	}
 	fmt.Println()
+
+	// Print action prompt
+	fmt.Printf("Player %v's turn\n", (gameInstance.GetState().GetCurrentPlayer() + 1))
+	fmt.Print("Enter action: ")
 }
