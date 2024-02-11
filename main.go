@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/chippolot/game-forge/game"
+	"github.com/chippolot/game-forge/games/othello"
 	tictactoe "github.com/chippolot/game-forge/games/tic-tac-toe"
 	"github.com/chippolot/game-forge/utils"
 )
@@ -18,7 +19,7 @@ func main() {
 	fmt.Println("Welcome to the Game Hub!")
 	fmt.Println("Please select a game to play:")
 	fmt.Println("1. Tic-Tac-Toe")
-	fmt.Println("2. Grid Lock")
+	fmt.Println("2. Othello")
 
 	fmt.Print("Enter your choice: ")
 	choiceStr, _ := reader.ReadString('\n')
@@ -36,8 +37,7 @@ func main() {
 	case 1:
 		gameInstance = tictactoe.NewGame(actionParser)
 	case 2:
-		//gameInstance = gridlock.NewGame()
-		return
+		gameInstance = othello.NewGame(actionParser)
 	}
 
 	gameInstance.Start()

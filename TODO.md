@@ -1,8 +1,8 @@
 # TODO
 - [ ] Othello
-    - [ ] Score
-        - [ ] Add score display
     - [ ] Implement rules
+- [ ] Board
+    - [ ] Flip row notation
 - [ ] Checkers
     - [ ] Actions
         - [ ] Add ability to place or move piece
@@ -18,6 +18,9 @@
     - [ ] Pieces
         - [ ] Don't directly associate players and pieces (think chess)
 
+# Bugs
+- [ ] Invalid action parse leads to broken subsequent parsing
+
 # Done
 - [x] Pieces
     - [x] Create interface
@@ -26,6 +29,8 @@
     - [x] Game selection
 - [x] Game
     - [x] Update game framework to check for winner and display message
+- [x] Score
+    - [x] Add score display
 - [x] Tic-Tac-Toe
     - [x] Finish implementing IsGameOver for t-t-t
     - [x] Finish implementing GetWinner for t-t-t

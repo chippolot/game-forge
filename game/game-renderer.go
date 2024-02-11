@@ -54,7 +54,7 @@ func printBoard(board IBoard) {
 	height := board.GetHeight()
 	for y := 0; y < height; y++ {
 		// Print row coord
-		fmt.Printf("%v ", height-y)
+		fmt.Printf("%v ", y+1)
 		for x := 0; x < board.GetWidth(); x++ {
 			piece := board.GetPiece(x, y)
 			if piece == nil {
