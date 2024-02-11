@@ -11,6 +11,7 @@ type IGameRenderer interface {
 }
 
 type SimpleGameRenderer struct {
+	PrintScores bool
 }
 
 func (r *SimpleGameRenderer) Print(gameInstance IGame) {
@@ -21,9 +22,39 @@ func (r *SimpleGameRenderer) Print(gameInstance IGame) {
 	fmt.Println("---------------------------------------")
 	fmt.Println()
 
+	// (optionally) Print scores
+	if r.PrintScores {
+		printScore(0, gameInstance.GetState())
+		printScore(1, gameInstance.GetState())
+		fmt.Println()
+	}
+
 	// Print board
 	board := gameInstance.GetState().GetBoard()
-	for y := 0; y < board.GetHeight(); y++ {
+	printBoard(board)
+
+	// Print action prompt
+	fmt.Printf("Player %v's turn\n", (gameInstance.GetState().GetCurrentPlayer() + 1))
+	fmt.Print("Enter action: ")
+}
+
+func printScore(player Player, state IGameState) {
+	fmt.Printf("Player %v: %v\n", player, state.GetPlayerScore(player))
+}
+
+func printBoard(board IBoard) {
+	// Print column coords
+	fmt.Print("  ")
+	for x := 0; x < board.GetWidth(); x++ {
+		fmt.Printf("%c ", 'a'+x)
+	}
+	fmt.Println()
+
+	// Print board squares and pieces
+	height := board.GetHeight()
+	for y := 0; y < height; y++ {
+		// Print row coord
+		fmt.Printf("%v ", height-y)
 		for x := 0; x < board.GetWidth(); x++ {
 			piece := board.GetPiece(x, y)
 			if piece == nil {
@@ -35,8 +66,4 @@ func (r *SimpleGameRenderer) Print(gameInstance IGame) {
 		fmt.Println()
 	}
 	fmt.Println()
-
-	// Print action prompt
-	fmt.Printf("Player %v's turn\n", (gameInstance.GetState().GetCurrentPlayer() + 1))
-	fmt.Print("Enter action: ")
 }

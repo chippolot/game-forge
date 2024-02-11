@@ -1,11 +1,5 @@
 # TODO
 - [ ] Othello
-    - [ ] Actions
-        - [ ] Add better player prompt which displays possible action types
-            - [ ] Get help for actions
-    - [ ] Board
-        - [ ] Add chess style board coords
-        - [ ] Add board coord display
     - [ ] Score
         - [ ] Add score display
     - [ ] Implement rules
@@ -41,3 +35,7 @@
     - [x] Add action parser
     - [x] Better way to inject implicit data into actions (ex: place piece)
     - [x] Share more action parsing code
+    - [x] Add better player prompt which displays possible action types
+- [x] Board
+    - [x] Add chess style board coords
+    - [x] Add board coord display

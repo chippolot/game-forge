@@ -2,7 +2,8 @@ package game
 
 import (
 	"fmt"
-	"strconv"
+
+	"github.com/chippolot/game-forge/utils"
 )
 
 type ActionDesc struct {
@@ -20,22 +21,17 @@ type PlacePieceAction struct {
 }
 
 func PlacePieceActionDesc() ActionDesc {
-	return ActionDesc{"place", "place <x> <y>", "places a piece at <x>,<y>"}
+	return ActionDesc{"place", "place <coord>", "places a piece at <coord>"}
 }
 
 func ParsePlacePieceAction(args []string, getPieceFunc func() Piece) (IAction, error) {
-	if len(args) != 2 {
+	if len(args) != 1 {
 		return nil, fmt.Errorf("invalid number of arguments for place action")
 	}
 
-	x, err := strconv.Atoi(args[0])
+	x, y, err := utils.ParseCoord(args[0])
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse X coordinate: %w", err)
-	}
-
-	y, err := strconv.Atoi(args[1])
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse Y coordinate: %w", err)
+		return nil, err
 	}
 
 	return &PlacePieceAction{

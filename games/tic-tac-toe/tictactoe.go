@@ -123,8 +123,6 @@ func NewState(board game.IBoard) game.IGameState {
 	return &GameState{game.NewCommonGameState(board)}
 }
 
-// Game concrete implementation of the tic-tac-toe game
-
 type Piece struct {
 	player game.Player
 }
@@ -139,7 +137,7 @@ func NewGame(parser *game.ActionParser) game.IGame {
 	logic := &Logic{}
 	board := game.NewBoard(3, 3)
 	state := NewState(board)
-	renderer := &game.SimpleGameRenderer{}
+	renderer := &game.SimpleGameRenderer{PrintScores: false}
 	logic.RegisterActions(parser)
 	return game.NewGame(logic, state, renderer, metadata, parser)
 }
