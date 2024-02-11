@@ -45,19 +45,12 @@ func main() {
 	for {
 		utils.ClearScreen()
 
-		// Print game metadata
-		fmt.Println(gameInstance.GetMetadata().Name)
-		fmt.Println("---------------------------------------")
-		fmt.Println(utils.WrapLines(gameInstance.GetMetadata().Decription, 80))
-		fmt.Println("---------------------------------------")
-		fmt.Println()
-
-		// Print board
+		// Print game instance
 		gameInstance.Print()
 
 		// Print action prompt
-		fmt.Printf("Player %v's turn\n", (gameInstance.GetCurrentPlayer() + 1))
-		fmt.Println("Enter action:")
+		fmt.Printf("Player %v's turn\n", (gameInstance.GetState().GetCurrentPlayer() + 1))
+		fmt.Print("Enter action: ")
 
 		// Parse player action
 		input, _ := reader.ReadString('\n')

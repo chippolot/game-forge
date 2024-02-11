@@ -2,6 +2,7 @@ package game
 
 type IGameState interface {
 	ICommonGameState
+	Reset()
 }
 
 type ICommonGameState interface {
@@ -13,6 +14,8 @@ type ICommonGameState interface {
 	GetPlayerScore(player Player) int
 	AddPlayerScore(player Player, delta int)
 	SetPlayerScore(player Player, value int)
+
+	Reset()
 }
 
 type CommonGameState struct {
@@ -51,4 +54,12 @@ func (s *CommonGameState) AddPlayerScore(player Player, delta int) {
 
 func (s *CommonGameState) SetPlayerScore(player Player, value int) {
 	s.playerScores[player] = value
+}
+
+func (s *CommonGameState) Reset() {
+	for p := range s.playerScores {
+		delete(s.playerScores, p)
+	}
+	s.board.Clear()
+	s.currentPlayer = 0
 }

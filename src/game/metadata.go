@@ -6,14 +6,14 @@ type IMetadata interface {
 }
 
 type Metadata struct {
-	name       string
-	decription string
+	name        string
+	description string
 }
 
 func NewMetadata(name string, description string) *Metadata {
 	return &Metadata{
 		name:        name,
-		description: description
+		description: description,
 	}
 }
 
@@ -22,5 +22,5 @@ func (m *Metadata) GetName() string {
 }
 
 func (m *Metadata) GetDescription() string {
-	return m.decription
+	return m.description
 }

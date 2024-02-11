@@ -1,17 +1,18 @@
 # TODO
-- [ ] Grid Lock
+- [ ] Othello
     - [ ] Actions
         - [ ] Add better player prompt which displays possible action types
             - [ ] Get help for actions
-        - [ ] Share more action parsing code
-        - [ ] Add ability to place or move piece
         - [ ] Add game config which can enable / disable action types
-            - [ ] Consider IAction with IRules processing and validating actions?
     - [ ] Board
         - [ ] Add chess style board coords
         - [ ] Add board coord display
+    - [ ] Score
+        - [ ] Add score display
     - [ ] Implement rules
 - [ ] Checkers
+    - [ ] Actions
+        - [ ] Add ability to place or move piece
     - [ ] Pieces
         - [ ] Actions can result in piece removal
         - [ ] Add colored pieces
@@ -23,8 +24,6 @@
 - [ ] Chess
     - [ ] Pieces
         - [ ] Don't directly associate players and pieces (think chess)
-- [ ] Score
-    - [ ] Add score display
 
 # Done
 - [x] Pieces
@@ -42,3 +41,4 @@
 - [x] Actions
     - [x] Add action parser
     - [x] Better way to inject implicit data into actions (ex: place piece)
+    - [x] Share more action parsing code

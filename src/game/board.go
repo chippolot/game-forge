@@ -1,9 +1,5 @@
 package game
 
-import (
-	"fmt"
-)
-
 type IBoard interface {
 	GetWidth() int
 	GetHeight() int
@@ -12,7 +8,6 @@ type IBoard interface {
 	PlacePiece(x, y int, piece Piece)
 	IsFull() bool
 	Clear()
-	Print()
 }
 
 // TicTacToeBoard concrete implementation of the tic-tac-toe game board
@@ -71,19 +66,4 @@ func (b *Board) Clear() {
 			b.board[y][x] = nil
 		}
 	}
-}
-
-func (b *Board) Print() {
-	for y := 0; y < b.Height; y++ {
-		for x := 0; x < b.Width; x++ {
-			piece := b.board[y][x]
-			if piece == nil {
-				fmt.Print("- ")
-			} else {
-				fmt.Print(piece.GetDisplayString() + " ")
-			}
-		}
-		fmt.Println()
-	}
-	fmt.Println()
 }

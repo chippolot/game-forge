@@ -2,7 +2,6 @@ package tictactoe
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/chippolot/game-forge/src/game"
 )
@@ -10,7 +9,11 @@ import (
 type Logic struct{}
 
 func (l *Logic) RegisterActions(actionParser *game.ActionParser) {
-	actionParser.RegisterAction(game.PlacePieceActionKeyword, parsePlacePieceAction)
+	actionParser.RegisterAction(game.PlacePieceActionKeyword, func(args []string, gameInstance game.IGame) (game.IAction, error) {
+		return game.ParsePlacePieceAction(args, func() game.Piece {
+			return getPlayerPiece(gameInstance.GetState().GetCurrentPlayer())
+		})
+	})
 }
 
 func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.GameResult, error) {
@@ -68,16 +71,13 @@ func isGameOver(board game.IBoard) (game.GameResultState, game.Player) {
 }
 
 func getWinner(board game.IBoard) (bool, game.Player) {
-	// Check columns
-	for x := 0; x < 3; x++ {
-		hasWinner, winner := checkRun(board, x, 0, 0, 1)
+	// Check rows and columns
+	for i := 0; i < 3; i++ {
+		hasWinner, winner := checkRun(board, 0, i, 1, 0)
 		if hasWinner {
 			return true, winner
 		}
-	}
-	// Check rows
-	for y := 0; y < 3; y++ {
-		hasWinner, winner := checkRun(board, 0, y, 1, 0)
+		hasWinner, winner = checkRun(board, i, 0, 0, 1)
 		if hasWinner {
 			return true, winner
 		}
@@ -111,57 +111,32 @@ func checkRun(board game.IBoard, x, y, dx, dy int) (bool, game.Player) {
 }
 
 type GameState struct {
-	game.CommonGameState
+	game.ICommonGameState
 }
 
-func NewState() game.IGameState {
-	return &GameState{}
+func NewState(board game.IBoard) game.IGameState {
+	return &GameState{game.NewCommonGameState(board)}
 }
 
 // Game concrete implementation of the tic-tac-toe game
-type Game struct {
-	game.Metadata
-	logic game.ILogic
-	state game.IGameState
+
+type Piece struct {
+	player game.Player
 }
 
 func NewGame(parser *game.ActionParser) game.IGame {
 	name := "Tic-Tac-Toe"
-	desc := "Tic-tac-toe is a classic two-player game played on a 3x3 grid. Players take turns marking spaces with their respective symbols, typically \"X\" and \"O\", with the objective of placing three of their symbols in a row, column, or diagonal. The first player to achieve this goal wins the game. If all spaces are filled without a winner, the game ends in a draw. Tic-tac-toe is easy to learn, yet offers strategic depth, making it a timeless and engaging pastime for players of all ages."
-	game := &Game{
-		Metadata: *game.NewMetadata(name, desc),
-		logic:    &Logic{},
-		state:    NewState(),
-	}
-	game.logic.RegisterActions(parser)
-	return game
-}
-
-func (g *Game) Start() {
-	g.currentPlayer = 0
-}
-
-func (g *Game) GetCurrentPlayer() game.Player {
-	return g.currentPlayer
-}
-
-func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
-	return Piece{
-		player: player,
-	}
-}
-
-func (g *Game) ExecuteAction(action game.IAction) (game.GameResult, error) {
-	return g.logic.ExecuteAction(action, g.state)
-}
-
-func (g *Game) Restart() {
-	g.gameBoard.Clear()
-	g.Start()
-}
-
-type Piece struct {
-	player game.Player
+	desc := "Tic-tac-toe is a classic two-player game played on a 3x3 grid. Players take turns marking spaces with their " +
+		"respective symbols, typically \"X\" and \"O\", with the objective of placing three of their symbols in a row, column," +
+		" or diagonal. The first player to achieve this goal wins the game. If all spaces are filled without a winner, the game " +
+		"ends in a draw. Tic-tac-toe is easy to learn, yet offers strategic depth, making it a timeless and engaging pastime for players of all ages."
+	metadata := game.NewMetadata(name, desc)
+	logic := &Logic{}
+	board := game.NewBoard(3, 3)
+	state := NewState(board)
+	renderer := &game.SimpleGameRenderer{}
+	logic.RegisterActions(parser)
+	return game.NewGame(logic, state, renderer, metadata, parser)
 }
 
 func (p Piece) GetPlayer() game.Player {
@@ -177,24 +152,8 @@ func (p Piece) GetDisplayString() string {
 	panic("unknown piece")
 }
 
-func parsePlacePieceAction(args []string, gameInstance game.IGame) (game.IAction, error) {
-	if len(args) != 2 {
-		return nil, fmt.Errorf("invalid number of arguments for place action")
+func getPlayerPiece(player game.Player) game.Piece {
+	return Piece{
+		player: player,
 	}
-
-	x, err := strconv.Atoi(args[0])
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse X coordinate: %w", err)
-	}
-
-	y, err := strconv.Atoi(args[1])
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse Y coordinate: %w", err)
-	}
-
-	return &game.PlacePieceAction{
-		X:     x - 1,
-		Y:     y - 1,
-		Piece: gameInstance.GetPlayerPiece(gameInstance.GetCurrentPlayer()),
-	}, nil
 }
