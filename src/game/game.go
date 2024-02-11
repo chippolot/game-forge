@@ -1,29 +1,25 @@
 package game
 
 type IGame interface {
-	GetName() string
-	GetDescription() string
-
-	GetBoard() IBoard
+	IMetadata
 
 	GetCurrentPlayer() Player
-	GetPlayerPiece(player Player) Piece
 
 	Start()
-	RegisterActions(actionParser *ActionParser)
-	ExecuteAction(action IAction) (GameState, error)
+	ExecuteAction(action IAction) (GameResult, error)
+	Print()
 	Restart()
 }
 
-type GameState struct {
-	State         GameOverState
+type GameResult struct {
+	State         GameResultState
 	WinningPlayer Player
 }
 
-type GameOverState int
+type GameResultState int
 
 const (
-	NotGameOver GameOverState = iota
+	NotGameOver GameResultState = iota
 	GameWon
 	GameTie
 )

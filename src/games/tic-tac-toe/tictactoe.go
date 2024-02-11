@@ -7,17 +7,47 @@ import (
 	"github.com/chippolot/game-forge/src/game"
 )
 
-// Rules concrete implementation of the tic-tac-toe game rules
-type Rules struct{}
+type Logic struct{}
 
-func (r *Rules) IsValidAction(action game.IAction, player game.Player, board game.IBoard) (bool, error) {
+func (l *Logic) RegisterActions(actionParser *game.ActionParser) {
+	actionParser.RegisterAction(game.PlacePieceActionKeyword, parsePlacePieceAction)
+}
+
+func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.GameResult, error) {
+	validAction, err := isValidAction(action, state)
+	if !validAction {
+		return game.GameResult{}, err
+	}
+
+	switch typedAction := action.(type) {
+	case *game.PlacePieceAction:
+		state.GetBoard().PlacePiece(typedAction.X, typedAction.Y, typedAction.Piece)
+	default:
+		panic("Invalid action.")
+	}
+
+	gameOverState, winningPlayer := isGameOver(state.GetBoard())
+	if gameOverState == game.NotGameOver {
+		currentPlayer := state.GetCurrentPlayer()
+		currentPlayer = (currentPlayer + 1) % 2
+		state.SetCurrentPlayer(currentPlayer)
+	}
+
+	gameResult := game.GameResult{
+		State:         gameOverState,
+		WinningPlayer: winningPlayer,
+	}
+	return gameResult, nil
+}
+
+func isValidAction(action game.IAction, state game.IGameState) (bool, error) {
 	switch typedAction := action.(type) {
 	case *game.PlacePieceAction:
 		x, y := typedAction.X, typedAction.Y
-		if !board.IsInBounds(x, y) {
+		if !state.GetBoard().IsInBounds(x, y) {
 			return false, fmt.Errorf("out of bounds")
 		}
-		if board.GetPiece(x, y) != nil {
+		if state.GetBoard().GetPiece(x, y) != nil {
 			return false, fmt.Errorf("space occupied")
 		}
 		return true, nil
@@ -26,7 +56,7 @@ func (r *Rules) IsValidAction(action game.IAction, player game.Player, board gam
 	}
 }
 
-func (r *Rules) IsGameOver(board game.IBoard) (game.GameOverState, game.Player) {
+func isGameOver(board game.IBoard) (game.GameResultState, game.Player) {
 	hasWinner, winningPlayer := getWinner(board)
 	if hasWinner {
 		return game.GameWon, winningPlayer
@@ -80,39 +110,35 @@ func checkRun(board game.IBoard, x, y, dx, dy int) (bool, game.Player) {
 	return true, piece.GetPlayer()
 }
 
+type GameState struct {
+	game.CommonGameState
+}
+
+func NewState() game.IGameState {
+	return &GameState{}
+}
+
 // Game concrete implementation of the tic-tac-toe game
 type Game struct {
-	gameBoard     game.IBoard
-	rules         game.IRules
-	currentPlayer game.Player
+	game.Metadata
+	logic game.ILogic
+	state game.IGameState
 }
 
-func NewGame() game.IGame {
-	return &Game{
-		gameBoard:     game.NewBoard(3, 3),
-		rules:         &Rules{},
-		currentPlayer: 0,
+func NewGame(parser *game.ActionParser) game.IGame {
+	name := "Tic-Tac-Toe"
+	desc := "Tic-tac-toe is a classic two-player game played on a 3x3 grid. Players take turns marking spaces with their respective symbols, typically \"X\" and \"O\", with the objective of placing three of their symbols in a row, column, or diagonal. The first player to achieve this goal wins the game. If all spaces are filled without a winner, the game ends in a draw. Tic-tac-toe is easy to learn, yet offers strategic depth, making it a timeless and engaging pastime for players of all ages."
+	game := &Game{
+		Metadata: *game.NewMetadata(name, desc),
+		logic:    &Logic{},
+		state:    NewState(),
 	}
-}
-
-func (g *Game) GetName() string {
-	return "Tic-Tac-Toe"
-}
-
-func (g *Game) GetDescription() string {
-	return "Tic-tac-toe is a classic two-player game played on a 3x3 grid. Players take turns marking spaces with their respective symbols, typically \"X\" and \"O\", with the objective of placing three of their symbols in a row, column, or diagonal. The first player to achieve this goal wins the game. If all spaces are filled without a winner, the game ends in a draw. Tic-tac-toe is easy to learn, yet offers strategic depth, making it a timeless and engaging pastime for players of all ages."
-}
-
-func (g *Game) GetBoard() game.IBoard {
-	return g.gameBoard
+	game.logic.RegisterActions(parser)
+	return game
 }
 
 func (g *Game) Start() {
 	g.currentPlayer = 0
-}
-
-func (g *Game) RegisterActions(actionParser *game.ActionParser) {
-	actionParser.RegisterAction(game.PlacePieceActionKeyword, parsePlacePieceAction)
 }
 
 func (g *Game) GetCurrentPlayer() game.Player {
@@ -125,30 +151,8 @@ func (g *Game) GetPlayerPiece(player game.Player) game.Piece {
 	}
 }
 
-func (g *Game) ExecuteAction(action game.IAction) (game.GameState, error) {
-	player := g.GetCurrentPlayer()
-	validAction, err := g.rules.IsValidAction(action, player, g.gameBoard)
-	if !validAction {
-		return game.GameState{}, err
-	}
-
-	switch typedAction := action.(type) {
-	case *game.PlacePieceAction:
-		g.gameBoard.PlacePiece(typedAction.X, typedAction.Y, typedAction.Piece)
-	default:
-		panic("Invalid action.")
-	}
-
-	gameOverState, winningPlayer := g.rules.IsGameOver(g.gameBoard)
-	if gameOverState == game.NotGameOver {
-		g.currentPlayer = (g.currentPlayer + 1) % 2
-	}
-
-	gameState := game.GameState{
-		State:         gameOverState,
-		WinningPlayer: winningPlayer,
-	}
-	return gameState, nil
+func (g *Game) ExecuteAction(action game.IAction) (game.GameResult, error) {
+	return g.logic.ExecuteAction(action, g.state)
 }
 
 func (g *Game) Restart() {

@@ -30,10 +30,11 @@ func main() {
 	}
 
 	var gameInstance game.IGame
+	actionParser := game.NewActionParser()
 
 	switch choice {
 	case 1:
-		gameInstance = tictactoe.NewGame()
+		gameInstance = tictactoe.NewGame(actionParser)
 	case 2:
 		//gameInstance = gridlock.NewGame()
 		return
@@ -41,22 +42,18 @@ func main() {
 
 	gameInstance.Start()
 
-	actionParser := game.NewActionParser()
-	gameInstance.RegisterActions(actionParser)
-
 	for {
 		utils.ClearScreen()
 
 		// Print game metadata
-		fmt.Println(gameInstance.GetName())
+		fmt.Println(gameInstance.GetMetadata().Name)
 		fmt.Println("---------------------------------------")
-		fmt.Println(utils.WrapLines(gameInstance.GetDescription(), 80))
+		fmt.Println(utils.WrapLines(gameInstance.GetMetadata().Decription, 80))
 		fmt.Println("---------------------------------------")
 		fmt.Println()
 
 		// Print board
-		board := gameInstance.GetBoard()
-		board.Print()
+		gameInstance.Print()
 
 		// Print action prompt
 		fmt.Printf("Player %v's turn\n", (gameInstance.GetCurrentPlayer() + 1))
