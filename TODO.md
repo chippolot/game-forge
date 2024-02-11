@@ -14,6 +14,7 @@
 - [ ] AI
     - [ ] Implement simple LLM to generate lua code
     - [ ] Implement game registry to save fun games
+    - [ ] Validation of working game logic (???)
 - [ ] Chess
     - [ ] Pieces
         - [ ] Don't directly associate players and pieces (think chess)
