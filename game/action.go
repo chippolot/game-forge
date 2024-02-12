@@ -16,7 +16,7 @@ type IAction interface {
 }
 
 type PlacePieceAction struct {
-	X, Y  int
+	Coord Coord
 	Piece Piece
 }
 
@@ -35,8 +35,47 @@ func ParsePlacePieceAction(args []string, getPieceFunc func() Piece) (IAction, e
 	}
 
 	return &PlacePieceAction{
-		X:     x - 1,
-		Y:     y - 1,
+		Coord: Coord{
+			X: x - 1,
+			Y: y - 1,
+		},
 		Piece: getPieceFunc(),
+	}, nil
+}
+
+type MovePieceAction struct {
+	Start Coord
+	Moves []Coord
+}
+
+func MovePieceActionDesc() ActionDesc {
+	return ActionDesc{"move", "move <start_coord> <to_coord_1> ...", "moves piece at <start_coord> to <to_coord_1> and then to following coords if supported"}
+}
+
+func ParseMovePieceAction(args []string, maxMoves int) (IAction, error) {
+	if len(args) < 2 {
+		return nil, fmt.Errorf("invalid number of arguments for move action")
+	}
+
+	x0, y0, err := utils.ParseCoord(args[0])
+	if err != nil {
+		return nil, err
+	}
+
+	moves := make([]Coord, 0, 1)
+	for i := 1; i < len(args); i++ {
+
+		x, y, err := utils.ParseCoord(args[i])
+		if err != nil {
+			return nil, err
+		}
+		moves = append(moves, Coord{X: x, Y: y})
+	}
+
+	return &MovePieceAction{
+		Start: Coord{
+			X: x0, Y: y0,
+		},
+		Moves: moves,
 	}, nil
 }

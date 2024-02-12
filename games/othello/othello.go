@@ -32,7 +32,7 @@ func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.
 
 	switch typedAction := action.(type) {
 	case *game.PlacePieceAction:
-		flipPieces(typedAction.X, typedAction.Y, typedAction.Piece, state.GetBoard())
+		flipPieces(typedAction.Coord.X, typedAction.Coord.Y, typedAction.Piece, state.GetBoard())
 	default:
 		panic("Invalid action.")
 	}
@@ -56,7 +56,7 @@ func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.
 func isValidAction(action game.IAction, state game.IGameState) (bool, error) {
 	switch typedAction := action.(type) {
 	case *game.PlacePieceAction:
-		if canPlacePiece(typedAction.X, typedAction.Y, typedAction.Piece, state.GetBoard()) {
+		if canPlacePiece(typedAction.Coord.X, typedAction.Coord.Y, typedAction.Piece, state.GetBoard()) {
 			return true, nil
 		}
 		return false, fmt.Errorf("invalid move")

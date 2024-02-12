@@ -29,7 +29,7 @@ func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.
 
 	switch typedAction := action.(type) {
 	case *game.PlacePieceAction:
-		state.GetBoard().PlacePiece(typedAction.X, typedAction.Y, typedAction.Piece)
+		state.GetBoard().PlacePiece(typedAction.Coord.X, typedAction.Coord.Y, typedAction.Piece)
 	default:
 		panic("Invalid action.")
 	}
@@ -51,7 +51,7 @@ func (l *Logic) ExecuteAction(action game.IAction, state game.IGameState) (game.
 func isValidAction(action game.IAction, state game.IGameState) (bool, error) {
 	switch typedAction := action.(type) {
 	case *game.PlacePieceAction:
-		x, y := typedAction.X, typedAction.Y
+		x, y := typedAction.Coord.X, typedAction.Coord.Y
 		if !state.GetBoard().IsInBounds(x, y) {
 			return false, fmt.Errorf("out of bounds")
 		}

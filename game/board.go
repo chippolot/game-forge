@@ -1,5 +1,9 @@
 package game
 
+type Coord struct {
+	X, Y int
+}
+
 type IBoard interface {
 	GetWidth() int
 	GetHeight() int
