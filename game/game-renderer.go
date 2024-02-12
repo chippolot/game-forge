@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 
+	"github.com/chippolot/game-forge/color"
 	"github.com/chippolot/game-forge/utils"
 )
 
@@ -60,7 +61,11 @@ func printBoard(board IBoard) {
 			if piece == nil {
 				fmt.Print("- ")
 			} else {
-				fmt.Print(piece.GetDisplayString() + " ")
+				c := color.Green
+				if piece.GetPlayer() == 1 {
+					c = color.Red
+				}
+				fmt.Print(c + piece.GetDisplayString() + color.Reset + " ")
 			}
 		}
 		fmt.Println()

@@ -1,14 +1,4 @@
 # TODO
-- [ ] Othello
-    - [ ] Pieces
-        - [ ] Add colored pieces
-- [ ] Board
-    - [ ] Flip row notation
-- [ ] Checkers
-    - [ ] Actions
-        - [ ] Add ability to place or move piece
-    - [ ] Pieces
-        - [ ] Actions can result in piece removal
 - [ ] Lua
     - [ ] Have game framework call into lua
 - [ ] AI
@@ -18,6 +8,8 @@
 - [ ] Chess
     - [ ] Pieces
         - [ ] Don't directly associate players and pieces (think chess)
+- [ ] Board
+    - [ ] Flip row notation
 
 # Bugs
 - [ ] Invalid action parse leads to broken subsequent parsing
@@ -26,6 +18,8 @@
 - [x] Pieces
     - [x] Create interface
     - [x] Handle display
+    - [x] Actions can result in piece removal
+    - [x] Add colored pieces
 - [x] Interface
     - [x] Game selection
 - [x] Game
@@ -33,9 +27,10 @@
 - [x] Score
     - [x] Add score display
 - [x] Tic-Tac-Toe
-    - [x] Finish implementing IsGameOver for t-t-t
-    - [x] Finish implementing GetWinner for t-t-t
+    - [x] Implement rules
 - [x] Othello
+    - [x] Implement rules
+- [x] Checkers
     - [x] Implement rules
 - [x] Project
     - [x] Create github
@@ -44,6 +39,7 @@
     - [x] Better way to inject implicit data into actions (ex: place piece)
     - [x] Share more action parsing code
     - [x] Add better player prompt which displays possible action types
+    - [x] Add ability to place or move piece
 - [x] Board
     - [x] Add chess style board coords
     - [x] Add board coord display
