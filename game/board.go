@@ -54,6 +54,10 @@ func (b *Board) GetPiece(x, y int) Piece {
 }
 
 func (b *Board) PlacePiece(x, y int, piece Piece) {
+	p := b.GetPiece(x, y)
+	if p != nil {
+		panic(fmt.Sprintf("Space at %v %v is already occupied", x, y))
+	}
 	b.board[y][x] = piece
 }
 
