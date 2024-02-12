@@ -17,7 +17,7 @@ func ParseCoord(coord string) (int, int, error) {
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to parse coordinate: %w", err)
 	}
-	return x, y, nil
+	return x - 1, y - 1, nil
 }
 
 func ClearScreen() {

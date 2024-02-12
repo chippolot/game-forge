@@ -36,8 +36,8 @@ func ParsePlacePieceAction(args []string, getPieceFunc func() Piece) (IAction, e
 
 	return &PlacePieceAction{
 		Coord: Coord{
-			X: x - 1,
-			Y: y - 1,
+			X: x,
+			Y: y,
 		},
 		Piece: getPieceFunc(),
 	}, nil
