@@ -53,7 +53,11 @@ func MovePieceActionDesc() ActionDesc {
 }
 
 func ParseMovePieceAction(args []string, maxMoves int) (IAction, error) {
-	if len(args) < 2 {
+	numArgs := len(args)
+	if numArgs < 2 {
+		return nil, fmt.Errorf("invalid number of arguments for move action")
+	}
+	if maxMoves > 0 && numArgs > maxMoves+1 {
 		return nil, fmt.Errorf("invalid number of arguments for move action")
 	}
 
@@ -63,7 +67,7 @@ func ParseMovePieceAction(args []string, maxMoves int) (IAction, error) {
 	}
 
 	moves := make([]Coord, 0, 1)
-	for i := 1; i < len(args); i++ {
+	for i := 1; i < numArgs; i++ {
 
 		x, y, err := utils.ParseCoord(args[i])
 		if err != nil {

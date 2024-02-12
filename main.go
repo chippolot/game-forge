@@ -8,8 +8,9 @@ import (
 	"strings"
 
 	"github.com/chippolot/game-forge/game"
+	"github.com/chippolot/game-forge/games/checkers"
 	"github.com/chippolot/game-forge/games/othello"
-	tictactoe "github.com/chippolot/game-forge/games/tic-tac-toe"
+	"github.com/chippolot/game-forge/games/tictactoe"
 	"github.com/chippolot/game-forge/utils"
 )
 
@@ -20,13 +21,14 @@ func main() {
 	fmt.Println("Please select a game to play:")
 	fmt.Println("1. Tic-Tac-Toe")
 	fmt.Println("2. Othello")
+	fmt.Println("3. Checkers")
 
 	fmt.Print("Enter your choice: ")
 	choiceStr, _ := reader.ReadString('\n')
 	choiceStr = strings.TrimSpace(choiceStr)
 	choice, err := strconv.Atoi(choiceStr)
-	if err != nil || (choice != 1 && choice != 2) {
-		fmt.Println("Invalid choice. Please enter 1 or 2.")
+	if err != nil || (choice < 1 || choice > 3) {
+		fmt.Println("Invalid choice. Please enter a number between 1 and 3.")
 		return
 	}
 
@@ -38,6 +40,8 @@ func main() {
 		gameInstance = tictactoe.NewGame(actionParser)
 	case 2:
 		gameInstance = othello.NewGame(actionParser)
+	case 3:
+		gameInstance = checkers.NewGame(actionParser)
 	}
 
 	gameInstance.Start()
