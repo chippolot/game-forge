@@ -1,5 +1,7 @@
 package game
 
+import "fmt"
+
 type Coord struct {
 	X, Y int
 }
@@ -10,6 +12,8 @@ type IBoard interface {
 	IsInBounds(x, y int) bool
 	GetPiece(x, y int) Piece
 	PlacePiece(x, y int, piece Piece)
+	MovePiece(fromX, fromY, toX, toY int)
+	RemovePiece(x, y int)
 	IsFull() bool
 	Clear()
 }
@@ -51,6 +55,23 @@ func (b *Board) GetPiece(x, y int) Piece {
 
 func (b *Board) PlacePiece(x, y int, piece Piece) {
 	b.board[y][x] = piece
+}
+
+func (b *Board) MovePiece(fromX, fromY, toX, toY int) {
+	p := b.GetPiece(fromX, fromY)
+	if p == nil {
+		panic(fmt.Sprintf("No piece to move at %v %v", fromX, fromY))
+	}
+	b.RemovePiece(fromX, fromY)
+	b.PlacePiece(toX, toY, p)
+}
+
+func (b *Board) RemovePiece(x, y int) {
+	p := b.GetPiece(x, y)
+	if p == nil {
+		panic(fmt.Sprintf("No piece to remove at %v %v", x, y))
+	}
+	b.board[y][x] = nil
 }
 
 func (b *Board) IsFull() bool {
